@@ -1,0 +1,157 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+}
+
+.main-header {
+    width: 100%;
+    height: 71px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+.home-logo { /* TODO: избавиться от отдельного logo, посмотреть как в htmlacademy   */
+    width: 175px;
+    height: 26px;
+}
+
+.home-logo-link {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    background: url("logo.svg") no-repeat;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 16px;
+    background-color: #007DFF;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-section {
+    border-bottom: 1px solid rgba(19, 100, 205, 0.10);
+    border-top: 1px solid rgba(19, 100, 205, 0.10);
+}
+
+.timeline {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.timeline td, .timeline tr {
+    border-collapse: collapse;
+    border: 1px solid black;
+    font-size: 11px;
+    font-weight: bold;
+    color: #858E98;
+    padding: 0;
+}
+
+.timeline .cell {
+    width: 100%;
+    height: 45px;
+    position: relative;
+    right: -50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.time {
+    display: inline-block;
+    width: 49px;
+    height: 13px;
+    text-align: center;
+}
+
+.diagram {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    text-align: center;
+}
+
+.diagram td, .diagram tr {
+    border-collapse: collapse;
+    border: 1px solid rgba(19, 100, 205, 0.10);
+    border-bottom: none;
+    width: 100%;
+    height: 45px; /*TODO: пофиксить лишний пиксель*/
+}
+
+.diagram tr:first-child, .diagram tr:first-child td {
+    border-top: none;
+}
+
+.timeline tr td, .diagram tr td {
+    width: 2.71rem;
+}
+
+.timeline tr td:first-child, .diagram tr td:first-child {
+    width: 1.29rem;
+}
+
+.timeline tr td:last-child, .diagram tr td:last-child {
+    width: 0.54rem;
+}
+
+.wrapper {
+    /*overflow-x: hidden;*/
+}
+
+.timeline tr, .timeline tr td {
+    border: none;
+}
+
+.main-section, .diagram-section {
+    display: flex;
+    overflow-x: hidden;
+}
+
+.calendar {
+    display: inline-block;
+    min-width: 245px; /*TODO: нужно ли здесь задавать min-width или обычный width?*/
+    height: 45px;
+}
+
+.sidebar {
+    min-width: 245px;
+    height: 100%;
+    border-right: 1px solid rgba(19, 100, 205, 0.10);
+}
+
+.timeline-wrapper, .diagram-wrapper {
+    display: inline-block;
+    position: relative;
+}
+
+.diagram tr {
+    position: relative;
+}
+
+.event {
+    position: absolute;
+    display: inline-block;
+    height: 44px;
+    width: 146px;
+    background: #D5DFE9;
+    padding: 8px 0;
+}
+
+
+
+
+
