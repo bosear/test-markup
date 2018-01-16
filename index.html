@@ -1,52 +1,205 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
+    <script data-require="angularjs@1.6.4" data-semver="1.6.4" src="https://code.angularjs.org/1.6.4/angular.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="homePage.css">
     <link rel="stylesheet" href="normalize.css">
-    <title>Title</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
-<style>
-    * {
-        box-sizing: border-box;
-    }
 
-    html, body {
-        width: 100%;
-        
-    }
+<body ng-app="app">
+<header class="main-header">
+    <div class="home-logo">
+        <a href="#" class="home-logo-link"></a>
+    </div>
+    <div class="create-button">
+        <a href="#" class="button">Создать встречу</a>
+    </div>
+</header>
+<section class="main-section">
+    <div class="calendar"></div>
+    <div class="timeline">
+        <div class="td"><div class="time">8:00</div></div>
+        <div class="td"><div class="time">9</div></div>
+        <div class="td"><div class="time">10</div></div>
+        <div class="td"><div class="time">11</div></div>
+        <div class="td"><div class="time">12</div></div>
+        <div class="td"><div class="time">13</div></div>
+        <div class="td"><div class="time">14</div></div>
+        <div class="td"><div class="time">15</div></div>
+        <div class="td"><div class="time">16</div></div>
+        <div class="td"><div class="time">17</div></div>
+        <div class="td"><div class="time">18</div></div>
+        <div class="td"><div class="time">19</div></div>
+        <div class="td"><div class="time">20</div></div>
+        <div class="td"><div class="time">21</div></div>
+        <div class="td"><div class="time">22</div></div>
+        <div class="td"><div class="time">23</div></div>
+        <div class="td"></div>
+    </div>
+</section>
 
-    .red {
-        background: red;
-        height: 300px;
-        width: 100%;
-    }
-    table,tr,td {
-        border-collapse: collapse;
-        border: 1px solid black;
-        width: 100%;
-        table-layout: fixed;
-    }
-    td {
-        height: 40px;
-    }
-
-    header {
-        width: 100%;
-        background:  blueviolet;
-        height: 80px;
-        padding-left: 25px;
-        padding-right: 25px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-left: 25px;
-        padding-right: 25px;
-    }
-</style>
-<body>
-    <header></header>
-        <div class="red">
-
+<section class="diagram-section" ng-controller="MainController as ctrl">
+    <div class="sidebar"></div>
+    <div class="diagram">
+        <div class="tr">
+            <div class="item _first"><div class="cell">1</div></div>
+            <div class="item"><div class="cell">2</div></div>
+            <div class="item"><div class="cell">4</div></div>
+            <div class="item"><div class="cell">3</div></div>
+            <div class="item"><div class="cell">5</div></div>
+            <div class="item"><div class="cell">6</div></div>
+            <div class="item"><div class="cell">7</div></div>
+            <div class="item"><div class="cell">8</div></div>
+            <div class="item"><div class="cell">9</div></div>
+            <div class="item"><div class="cell">10</div></div>
+            <div class="item"><div class="cell">11</div></div>
+            <div class="item"><div class="cell">12</div></div>
+            <div class="item"><div class="cell">13</div></div>
+            <div class="item"><div class="cell">14</div></div>
+            <div class="item"><div class="cell">15</div></div>
+            <div class="item"><div class="cell">16</div></div>
+            <div class="item _last"></div>
         </div>
+        <div class="tr">
+            <div class="item _first"><div class="cell">1</div></div>
+            <div class="item"><div class="cell">2</div></div>
+            <div class="item"><div class="cell">4</div></div>
+            <div class="item"><div class="cell">3</div></div>
+            <div class="item"><div class="cell">5</div></div>
+            <div class="item"><div class="cell">6</div></div>
+            <div class="item"><div class="cell">7</div></div>
+            <div class="item"><div class="cell">8</div></div>
+            <div class="item"><div class="cell">9</div></div>
+            <div class="item"><div class="cell">10</div></div>
+            <div class="item"><div class="cell">11</div></div>
+            <div class="item"><div class="cell">12</div></div>
+            <div class="item"><div class="cell">13</div></div>
+            <div class="item"><div class="cell">14</div></div>
+            <div class="item"><div class="cell">15</div></div>
+            <div class="item"><div class="cell">16</div></div>
+            <div class="item _last"></div>
+            <room-events
+                    events="ctrl.events">
+            </room-events>
+            <!--<div class="directive"><div class="event"></div><div class="event2"></div></div>-->
+            <!--<div class="event"></div>-->
+        </div>
+    </div>
+
+</section>
+
+<script type="text/javascript" charset="utf-8">
+    var app = angular.module('app', []);
+
+    app.controller('MainController', MainController);
+    angular.module('app').directive('roomEvents', roomEventsDirective);
+
+    function MainController($scope) {
+        var self = this;
+
+        self.events = [{
+            start: "10:00",
+            end: "11:35"
+        },
+            {
+                start: "13:00",
+                end: "14:25"
+            }];
+    }
+
+    function roomEventsDirective($document) {
+        return {
+            scope: {},
+
+            bindToController: {
+                events: "<"
+            },
+
+
+
+            controller: function($timeout, $scope, $rootScope) {
+
+            },
+
+            link: function(scope, element, attrs, ctrl) {
+                var template = "<div class=\"directive\"></div>";
+                var container = angular.element(template);
+                var allTime = 940;
+                var allWidth = document.querySelectorAll(".tr")[0].clientWidth;
+
+                var mockCurrentTime = "9:00";
+
+                var firstWidth = toMinutes(mockCurrentTime);
+                var el = angular.element("<div class=\"event\" style=\"width:" + firstWidth + "px;\"></div>");
+                element.append(el);
+
+                ctrl.events.forEach(function (event) {
+                    var start = toMinutes(event.start);
+                    var end = toMinutes(event.end);
+
+                    var left = start/allTime * allWidth;
+                    var width = end/allTime * allWidth - left;
+
+                    el = angular.element("<div class=\"event\" style=\"width:" + width + "px; left:" + left + "px;\"></div>");
+                    element.append(el);
+                });
+
+                function toMinutes(time) {
+                    var result = time.split(':');
+                    var hours = +result[0] - 8;
+                    var minutes = +result[1];
+
+                    return hours*60 + minutes;
+                }
+            },
+
+            controllerAs: "ctrl"
+        }
+    }
+
+</script>
 </body>
+
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
