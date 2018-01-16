@@ -104,6 +104,8 @@ html, body {
     height: 44px;
     width: 146px;
     background: #D5DFE9;
+    opacity: 0.5;
+    background-clip: content-box;
     padding: 8px 0;
 }
 
@@ -123,11 +125,11 @@ html, body {
     border-right: 1px solid rgba(19, 100, 205, 0.10);
 }
 
-.diagram .item:first-child {
+.diagram .item._first {
     width: calc(100%/15.677*0.477);
 }
 
-.diagram .item:last-child {
+.diagram .item._last{
     width: calc(100%/15.677*0.2);
 }
 
