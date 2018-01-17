@@ -61,8 +61,11 @@
             <div class="item"><div class="cell">13</div></div>
             <div class="item"><div class="cell">14</div></div>
             <div class="item"><div class="cell">15</div></div>
-            <div class="item"><div class="cell">16</div></div>
-            <div class="item _last"></div>
+            <div class="item"><div class="cell"></div></div>
+
+            <room-events
+                    events="ctrl.events">
+            </room-events>
         </div>
         <div class="tr">
             <div class="item _first"><div class="cell">1</div></div>
@@ -80,8 +83,7 @@
             <div class="item"><div class="cell">13</div></div>
             <div class="item"><div class="cell">14</div></div>
             <div class="item"><div class="cell">15</div></div>
-            <div class="item"><div class="cell">16</div></div>
-            <div class="item _last"></div>
+            <div class="item"><div class="cell"></div></div>
             <room-events
                     events="ctrl.events">
             </room-events>
@@ -107,7 +109,7 @@
         },
             {
                 start: "13:00",
-                end: "14:25"
+                end: "15:00"
             }];
     }
 
@@ -119,13 +121,11 @@
                 events: "<"
             },
 
-
-
-            controller: function($timeout, $scope, $rootScope) {
+            controller: function ($timeout, $scope, $rootScope) {
 
             },
 
-            link: function(scope, element, attrs, ctrl) {
+            link: function (scope, element, attrs, ctrl) {
                 var template = "<div class=\"directive\"></div>";
                 var container = angular.element(template);
                 var allTime = 940;
@@ -133,27 +133,27 @@
 
                 var mockCurrentTime = "9:00";
 
-                var firstWidth = toMinutes(mockCurrentTime);
-                var el = angular.element("<div class=\"event\" style=\"width:" + firstWidth + "px;\"></div>");
+                var firstWidth = toMinutes(mockCurrentTime) + " / " + allTime + " * 100%";
+                var el = angular.element("<div class=\"eventWrapper\" style=\"width:calc(" + firstWidth + "); left:0;\"><div class=\"event\"></div></div>");
                 element.append(el);
 
                 ctrl.events.forEach(function (event) {
                     var start = toMinutes(event.start);
                     var end = toMinutes(event.end);
 
-                    var left = start/allTime * allWidth;
-                    var width = end/allTime * allWidth - left;
+                    var left = start + " / " + allTime + " * 100%";
+                    var width = end + " / " + allTime + " * 100%" + " - " + left; //"end / allTime * allWidth - left";
 
-                    el = angular.element("<div class=\"event\" style=\"width:" + width + "px; left:" + left + "px;\"></div>");
+                    el = angular.element("<div class=\"eventWrapper\" style=\"width: calc(" + width + "); left: calc(" + left + ");\"><div class=\"event\"></div></div>");
                     element.append(el);
                 });
 
                 function toMinutes(time) {
                     var result = time.split(':');
-                    var hours = +result[0] - 8;
+                    var hours = +result[0];
                     var minutes = +result[1];
 
-                    return hours*60 + minutes;
+                    return (hours -7) * 60 + minutes - 32; //TODO разобраться с магическими числами
                 }
             },
 

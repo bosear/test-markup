@@ -18,7 +18,7 @@ html, body {
     padding-right: 25px;
 }
 
-.home-logo { /* TODO: избавиться от отдельного logo, посмотреть как в htmlacademy   */
+.home-logo { /* TODO: РёР·Р±Р°РІРёС‚СЊСЃСЏ РѕС‚ РѕС‚РґРµР»СЊРЅРѕРіРѕ logo, РїРѕСЃРјРѕС‚СЂРµС‚СЊ РєР°Рє РІ htmlacademy   */
     width: 175px;
     height: 26px;
 }
@@ -59,7 +59,7 @@ html, body {
 
 .timeline .time {
     width: 100%;
-    height: 44px;
+    height: 45px;
     position: relative;
     right: -50%;
     display: flex;
@@ -93,13 +93,13 @@ html, body {
 
 
 .calendar {
-    min-width: 245px; /*TODO: нужно ли здесь задавать min-width или обычный width?*/
-    height: 44px;
+    min-width: 245px; /*TODO: РЅСѓР¶РЅРѕ Р»Рё Р·РґРµСЃСЊ Р·Р°РґР°РІР°С‚СЊ min-width РёР»Рё РѕР±С‹С‡РЅС‹Р№ width?*/
+    height: 45px;
 }
 
 .sidebar {
     min-width: 245px;
-    height: 44px;
+    height: 45px;
     border-right: 1px solid rgba(19, 100, 205, 0.10);
 }
 
@@ -108,6 +108,7 @@ html, body {
     display: flex;
     height: 44px;
     background: #F6F7F9;
+    /* opacity: 1; */
     padding: 8px 0;
 }
 
@@ -115,6 +116,7 @@ html, body {
     background: #D5DFE9;
     width: 100%;
     height: 100%;
+    opacity: 0.5;
 }
 
 .diagram {
@@ -123,24 +125,24 @@ html, body {
 
 .diagram .tr {
     display: flex;
-    height: 44px;
+    height: 75px;
 }
 
 .diagram .item {
     height: 100%;
-    margin-left: calc(100%/15.677 - 1px);
+    width: calc(100%/15.677);
     display: flex;
-    z-index: 100;
-    width: 1px;
-    background: rgba(19, 100, 205, 0.10);
+    padding: 8px 0;
+    background: #F6F7F9;
+    border-right: 1px solid rgba(19, 100, 205, 0.10);
 }
 
 .diagram .item._first {
-    margin-left: calc(100%/15.677*0.477 - 1px);
+    width: calc(100%/15.677*0.477);
 }
 
 .diagram .item._last{
-    margin-left: calc(100%/15.677*0.2);
+    width: calc(100%/15.677*0.2);
 }
 
 .tr {
@@ -159,12 +161,6 @@ html, body {
 .scrollwrapper {
     width: 100%;
     display: flex;
-}
-
-.cell {
-    width: 100%;
-    height: 100%;
-    background: #fff;
 }
 
 
