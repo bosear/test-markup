@@ -40,11 +40,6 @@ html, body {
     text-decoration: none;
 }
 
-.main-section {
-    border-bottom: 1px solid rgba(19, 100, 205, 0.10);
-    border-top: 1px solid rgba(19, 100, 205, 0.10);
-}
-
 .timeline {
     width: 100%;
     display: flex;
@@ -59,7 +54,7 @@ html, body {
 
 .timeline .time {
     width: 100%;
-    height: 44px;
+    height: 46px;
     position: relative;
     right: -50%;
     display: flex;
@@ -85,22 +80,21 @@ html, body {
 
 .main-section, .diagram-section {
     display: flex;
+    box-shadow: 0 -1px 0 0 #E9ECEF;
 }
 
 .diagram-section {
     width: 100%;
 }
 
-
 .calendar {
     min-width: 245px; /*TODO: нужно ли здесь задавать min-width или обычный width?*/
-    height: 44px;
+    height: 46px;
 }
 
 .sidebar {
     min-width: 245px;
-    height: 44px;
-    border-right: 1px solid rgba(19, 100, 205, 0.10);
+    border-right: 1px solid #E9ECEF;
 }
 
 .eventWrapper {
@@ -113,12 +107,19 @@ html, body {
 
 .event {
     background: #D5DFE9;
+    cursor: pointer;
     width: 100%;
     height: 100%;
 }
 
+._free-slot {
+    background: #fff;
+}
+
 .diagram {
     width: 100%;
+    position: relative;
+    background: #F6F7F9;
 }
 
 .diagram .tr {
@@ -130,7 +131,7 @@ html, body {
     height: 100%;
     margin-left: calc(100%/15.677 - 1px);
     display: flex;
-    z-index: 100;
+    z-index: 150;
     width: 1px;
     background: rgba(19, 100, 205, 0.10);
 }
@@ -143,9 +144,21 @@ html, body {
     margin-left: calc(100%/15.677*0.2);
 }
 
-.tr {
+.sidebar .tr, .sidebar .between-floors {
+    padding-left: 25px;
+}
+
+.sidebar .floor .tr {
+    height: 44px;
+}
+
+.floor .tr {
     position: relative;
-    background: #FFFFFF;
+    margin-bottom: 8px;
+}
+
+.floor .tr:last-child {
+    margin-bottom: 0;
 }
 
 .directive {
@@ -165,6 +178,61 @@ html, body {
     width: 100%;
     height: 100%;
     background: #fff;
+}
+
+.layout {
+    position: absolute;
+    left: 0;
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.tr ._disable {
+    z-index: 100;
+}
+
+.tr ._disable .event {
+    cursor: default;
+}
+
+.between-floors {
+    height: 37px;
+    width: 100%;
+    font-size: 11px;
+    font-weight: bold;
+    color: #858E98;
+    line-height: 17px;
+    text-transform: uppercase;
+}
+
+.floor-number {
+    padding-top: 20px;
+    padding-bottom: 4px;
+    display: inline-block;
+}
+
+.room-name {
+    min-width: 120px;
+    font-size: 15px;
+    color: #000;
+    line-height: 17px;
+    font-weight: bold;
+    padding-top: 4px;
+    margin-bottom: 2px;
+    display: inline-block;
+}
+
+.room-capacity {
+    min-width: 120px;
+    font-size: 13px;
+    color: #000;
+    line-height: 17px;
+    display: inline-block;
+}
+
+.sidebar._disable {
+    color: #858E98;
 }
 
 

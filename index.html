@@ -2,15 +2,14 @@
 <html>
 
 <head>
-    <script data-require="angularjs@1.6.4" data-semver="1.6.4" src="https://code.angularjs.org/1.6.4/angular.min.js"></script>
-    <link rel="stylesheet" href="style.css" />
-    <script src="script.js"></script>
+    <script data-require="angularjs@1.5.3" data-semver="1.5.3" src="https://code.angularjs.org/1.5.3/angular.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html;" charset="utf-8">
     <link rel="stylesheet" href="homePage.css">
     <link rel="stylesheet" href="normalize.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
 
-<body ng-app="app">
+<body ng-app="app"  ng-controller="MainController as ctrl">
 <header class="main-header">
     <div class="home-logo">
         <a href="#" class="home-logo-link"></a>
@@ -20,7 +19,9 @@
     </div>
 </header>
 <section class="main-section">
-    <div class="calendar"></div>
+    <div class="calendar">
+        <a href="#" ng-click="ctrl.changeEvents()">Изменить события</a>
+    </div>
     <div class="timeline">
         <div class="td"><div class="time">8:00</div></div>
         <div class="td"><div class="time">9</div></div>
@@ -42,123 +43,293 @@
     </div>
 </section>
 
-<section class="diagram-section" ng-controller="MainController as ctrl">
-    <div class="sidebar"></div>
+<section class="diagram-section">
+    <div class="sidebar">
+        <div class="floor" ng-repeat="floor in ctrl.floors track by $index">
+            <div class="between-floors">
+                <span class="floor-number">{{floor.number}} этаж</span>
+            </div>
+            <div class="tr" ng-repeat="room in floor.rooms track by $index">
+                <div class="room-name">{{room.name}}</div>
+                <div class="room-capacity">{{ctrl.getCapacity(room)}}</div>
+            </div>
+        </div>
+    </div>
     <div class="diagram">
-        <div class="tr">
-            <div class="item _first"><div class="cell">1</div></div>
-            <div class="item"><div class="cell">2</div></div>
-            <div class="item"><div class="cell">4</div></div>
-            <div class="item"><div class="cell">3</div></div>
-            <div class="item"><div class="cell">5</div></div>
-            <div class="item"><div class="cell">6</div></div>
-            <div class="item"><div class="cell">7</div></div>
-            <div class="item"><div class="cell">8</div></div>
-            <div class="item"><div class="cell">9</div></div>
-            <div class="item"><div class="cell">10</div></div>
-            <div class="item"><div class="cell">11</div></div>
-            <div class="item"><div class="cell">12</div></div>
-            <div class="item"><div class="cell">13</div></div>
-            <div class="item"><div class="cell">14</div></div>
-            <div class="item"><div class="cell">15</div></div>
-            <div class="item"><div class="cell"></div></div>
+        <div class="layout">
+            <div class="item _first"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+        </div>
 
+        <div class="floor" ng-repeat="floor in ctrl.floors track by $index">
+            <div class="between-floors"></div>
+            <div class="tr" ng-repeat="room in floor.rooms track by $index">
+                <room-events
+                        events="room.currentEvents">
+                </room-events>
+            </div>
+        </div>
+
+        <!--<div class="tr">
             <room-events
                     events="ctrl.events">
             </room-events>
         </div>
         <div class="tr">
-            <div class="item _first"><div class="cell">1</div></div>
-            <div class="item"><div class="cell">2</div></div>
-            <div class="item"><div class="cell">4</div></div>
-            <div class="item"><div class="cell">3</div></div>
-            <div class="item"><div class="cell">5</div></div>
-            <div class="item"><div class="cell">6</div></div>
-            <div class="item"><div class="cell">7</div></div>
-            <div class="item"><div class="cell">8</div></div>
-            <div class="item"><div class="cell">9</div></div>
-            <div class="item"><div class="cell">10</div></div>
-            <div class="item"><div class="cell">11</div></div>
-            <div class="item"><div class="cell">12</div></div>
-            <div class="item"><div class="cell">13</div></div>
-            <div class="item"><div class="cell">14</div></div>
-            <div class="item"><div class="cell">15</div></div>
-            <div class="item"><div class="cell"></div></div>
             <room-events
                     events="ctrl.events">
             </room-events>
-            <!--<div class="directive"><div class="event"></div><div class="event2"></div></div>-->
-            <!--<div class="event"></div>-->
         </div>
+        <div class="tr">
+            <room-events
+                    events="ctrl.events">
+            </room-events>
+        </div>
+        <div class="tr">
+            <room-events
+                    events="ctrl.events">
+            </room-events>
+        </div>-->
     </div>
 
 </section>
 
 <script type="text/javascript" charset="utf-8">
-    var app = angular.module('app', []);
+    angular.module('app', []);
 
-    app.controller('MainController', MainController);
-    angular.module('app').directive('roomEvents', roomEventsDirective);
+    angular.module('app').controller('MainController', MainController)
+                        .directive('roomEvents', roomEventsDirective)
+                        .factory('constantsFactory', constantsFactory);
 
     function MainController($scope) {
         var self = this;
-
-        self.events = [{
+        var flag = true;
+        self.floors = [{
+            number: 7,
+            rooms: [{
+                name: "Ржавый Фред",
+                capacity: "3:6"
+            },
+                {
+                    name: "Прачечная",
+                    capacity: ":10"
+                },
+                {
+                    name: "Жёлтый дом",
+                    capacity: ":10"
+                },
+                {
+                    name: "Оранжевый тюльпан",
+                    capacity: ":10"
+                }]
+        },
+            {
+                number: 6,
+                rooms: [{
+                    name: "Джокер",
+                    capacity: "3:6"
+                },
+                    {
+                        name: "Мариванна",
+                        capacity: "3:6"
+                    },
+                    {
+                        name: "Тонкий боб",
+                        capacity: "3:6"
+                    },
+                    {
+                        name: "Чёрная вдова",
+                        capacity: "3:6"
+                    },
+                    {
+                        name: "Белорусский ликёр",
+                        capacity: "3:6"
+                    }]
+            }];
+        var events1 = [{
+            id: 1,
             start: "10:00",
             end: "11:35"
         },
             {
+                id: 2,
                 start: "13:00",
                 end: "15:00"
             }];
+
+        var events2 = [{
+            id: 3,
+            start: "15:00",
+            end: "15:55"
+        },
+            {
+                id: 4,
+                start: "19:00",
+                end: "22:00"
+            }];
+
+        self.events = events1;
+
+        self.setEventsInRooms = function () {
+            self.floors.forEach(function (floor) {
+                floor.rooms.forEach(function(room) {
+                    room.currentEvents = self.events;
+                });
+            });
+        };
+
+        self.getCapacity = function (room) {
+            var capacity = room.capacity.split(':');
+
+            if (!capacity[0])
+                return 'до ' + capacity[1] + ' человек'; // TODO: подумать про локализацию
+            else
+                return capacity[0] + ' - ' + capacity[1] + ' человек';
+        };
+
+        self.changeEvents = function () {
+            if (flag) {
+                self.events = events2;
+                self.setEventsInRooms();
+                flag = false;
+            }
+            else {
+                self.events = events1;
+                self.setEventsInRooms();
+                flag = true;
+            }
+        };
+
+        self.setEventsInRooms();
     }
 
-    function roomEventsDirective($document) {
+    function roomEventsDirective($document, constantsFactory, $timeout) {
         return {
             scope: {},
 
+            // TODO: заменить на slots
             bindToController: {
                 events: "<"
             },
 
-            controller: function ($timeout, $scope, $rootScope) {
+            templateUrl: 'room-events.tmpl.html',
+            controllerAs: "ctrl",
 
-            },
+            controller: function ($scope, $element, $attrs) {
+                var self = this;
 
-            link: function (scope, element, attrs, ctrl) {
-                var template = "<div class=\"directive\"></div>";
-                var container = angular.element(template);
-                var allTime = 940;
-                var allWidth = document.querySelectorAll(".tr")[0].clientWidth;
+                addFreeSlots();
 
-                var mockCurrentTime = "9:00";
+                $scope.$watch(function() { return self.events;} , addFreeSlots);
 
-                var firstWidth = toMinutes(mockCurrentTime) + " / " + allTime + " * 100%";
-                var el = angular.element("<div class=\"eventWrapper\" style=\"width:calc(" + firstWidth + "); left:0;\"><div class=\"event\"></div></div>");
-                element.append(el);
+                function addFreeSlots() {
+                    var i = 0, freeSlot;
 
-                ctrl.events.forEach(function (event) {
-                    var start = toMinutes(event.start);
-                    var end = toMinutes(event.end);
+                    self.events.sort(sortByTime);
 
-                    var left = start + " / " + allTime + " * 100%";
-                    var width = end + " / " + allTime + " * 100%" + " - " + left; //"end / allTime * allWidth - left";
+                    if (toMinutes(constantsFactory.startTime) < toMinutes(self.events[0].start)) {
+                        self.events.unshift({
+                            start: constantsFactory.startTime,
+                            end: self.events[0].start,
+                            isFreeSlot: true
+                        });
+                        i = 1;
+                    }
+                    for (; i < self.events.length - 1; i++)
+                        if (toMinutes(self.events[i].end) < toMinutes(self.events[i + 1].start)) {
+                            freeSlot = {
+                                start: self.events[i].end,
+                                end: self.events[i + 1].start,
+                                isFreeSlot: true
+                            };
+                            self.events.splice(i + 1, 0, freeSlot);
+                        }
 
-                    el = angular.element("<div class=\"eventWrapper\" style=\"width: calc(" + width + "); left: calc(" + left + ");\"><div class=\"event\"></div></div>");
-                    element.append(el);
-                });
+                    if (toMinutes(self.events[i].end) < toMinutes(constantsFactory.endTime))
+                        self.events.push({
+                            start: self.events[i].end,
+                            end: constantsFactory.endTime,
+                            isFreeSlot: true
+                        });
+                }
 
                 function toMinutes(time) {
                     var result = time.split(':');
                     var hours = +result[0];
                     var minutes = +result[1];
 
-                    return (hours -7) * 60 + minutes - 32; //TODO разобраться с магическими числами
+                    return (hours - 7) * 60 + minutes - 32; //TODO разобраться с магическими числами
                 }
+
+                function sortByTime(event1, event2) {
+                    if (toMinutes(event1.start) < toMinutes(event2.start))
+                        return 0;
+                    else
+                        return 1;
+                }
+
+                self.getLeft = function (slot) {
+                    var start = toMinutes(slot.start);
+                    var left = start + " / " + constantsFactory.allTime + " * 100%";
+
+                    return 'calc(' + left + ')';
+                };
+
+                self.getWidth = function (slot) {
+                    var start = toMinutes(slot.start);
+                    var end = toMinutes(slot.end);
+
+                    var left = start + " / " + constantsFactory.allTime + " * 100%";
+                    var width = end + " / " + constantsFactory.allTime + " * 100%" + " - " + left;
+
+                    return 'calc(' + width + ')';
+                };
+
+                self.getWidthDisableSlot = function () {
+                    var start = toMinutes(constantsFactory.startTime);
+                    var end = toMinutes(constantsFactory.currentTime);
+
+                    var left = start + " / " + constantsFactory.allTime + " * 100%";
+                    var width = end + " / " + constantsFactory.allTime + " * 100%" + " - " + left;
+
+                    return 'calc(' + width + ')';
+                };
+
+                self.log = function (slot) {
+                   console.log(slot.id);
+                };
             },
 
-            controllerAs: "ctrl"
+            link: function (scope, element, attrs, ctrl) {
+
+            }
+
         }
+    }
+
+    function constantsFactory() {
+        var factory = {};
+
+        factory.currentTime = "9:00";
+        factory.startTime = "7:32";
+        factory.endTime = "23:12";
+        factory.allTime = 940;
+
+        return factory;
     }
 
 </script>

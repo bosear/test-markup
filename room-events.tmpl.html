@@ -1,0 +1,12 @@
+<div class="eventWrapper _disable"
+     ng-style="{
+                 width: ctrl.getWidthDisableSlot(),
+                 left: 0
+               }">
+    <div class="event"></div>
+</div>
+<div ng-repeat="slot in ctrl.events track by $index"
+     ng-style="{width: ctrl.getWidth(slot), left: ctrl.getLeft(slot)}"
+     class="eventWrapper">
+    <div class="event" ng-click="ctrl.log(slot);" ng-class="{'_free-slot' : slot.isFreeSlot}"></div>
+</div>
