@@ -20,7 +20,9 @@
 </header>
 <section class="main-section">
     <div class="calendar">
-        <a href="#" ng-click="ctrl.changeEvents()">Изменить события</a>
+        <a class="prev" href="#" ng-click="ctrl.changeEvents()"></a>
+        <a class="" href="#" ng-click="ctrl.changeEvents()">Изменить события</a>
+        <a class="next" href="#" ng-click="ctrl.changeEvents()"></a>
     </div>
     <div class="timeline">
         <div class="td"><div class="time">8:00</div></div>
@@ -113,6 +115,7 @@
 
     angular.module('app').controller('MainController', MainController)
                         .directive('roomEvents', roomEventsDirective)
+                        .directive('calendar', calendarDirective)
                         .factory('constantsFactory', constantsFactory);
 
     function MainController($scope) {
@@ -330,6 +333,30 @@
         factory.allTime = 940;
 
         return factory;
+    }
+
+    function calendarDirective(constantsFactory) {
+        return {
+            scope: {},
+
+            bindToController: {
+                format: '@',
+                currentDate: '=',
+                selectedDate: '='
+            },
+
+            templateUrl: 'calendar.tmpl.html',
+
+            controller: function($scope, $element, $attrs) {
+
+            },
+
+            link: function (scope, element, attrs, ctrl) {
+
+            },
+
+            controllerAs: 'ctrl'
+        }
     }
 
 </script>

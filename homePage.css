@@ -90,6 +90,10 @@ html, body {
 .calendar {
     min-width: 245px; /*TODO: нужно ли здесь задавать min-width или обычный width?*/
     height: 46px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
 }
 
 .sidebar {
@@ -235,6 +239,23 @@ html, body {
     color: #858E98;
 }
 
+.prev, .next {
+    width: 24px;
+    height: 24px;
+    background: #E9ECEF;
+    border-radius: 50px;
+    background-repeat:  no-repeat;
+}
+
+.prev {
+    background-position: 40% 50%;
+    background-image: url(arrow2.svg);
+}
+
+.next {
+    background-position: 60% 50%;
+    background-image: url(arrow.svg);
+}
 
 
 
