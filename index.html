@@ -348,7 +348,59 @@
             templateUrl: 'calendar.tmpl.html',
 
             controller: function($scope, $element, $attrs) {
+                var self = {};
 
+                self.weeks = [];
+                self.selectedMonth = (new Date).getMonth();
+
+                self.setWeeks = function (year, month) {
+                    var mon = month; // месяцы в JS идут от 0 до 11, а не от 1 до 12
+                    var date = new Date(year, mon);
+                    var week = [];
+                    var firstDayWeek = getDay(date);
+                    var idx = 0, iterableDate;
+
+                    // заполнить первый ряд от понедельника
+                    // и до дня, с которого начинается месяц
+                    // * * * | 1  2  3  4
+                    for (var i = 0; i < firstDayWeek; i++) {
+                        iterableDate = new Date(year, mon);
+                        iterableDate.setDate(1 + i - firstDayWeek);
+                        week.push(iterableDate.getDate());
+                    }
+
+                    self.weeks.push(week);
+
+                    // ячейки календаря с датами
+                    while (date.getMonth() == mon) {
+                        self.weeks[idx].push(date.getDate());
+
+                        if (getDay(date) % 7 == 6) { // вс, последний день - перевод строки
+                            self.weeks.push([]);
+                            ++idx;
+                        }
+
+                        date.setDate(date.getDate() + 1);
+                    }
+
+                    // добить таблицу пустыми ячейками, если нужно
+                    if (getDay(date) != 0) {
+                        for (var i = getDay(date); i < 7; i++) {
+                            self.weeks[idx].push(date.getDate());
+                            date.setDate(date.getDate() + 1);
+                        }
+                    }
+
+                    if (self.weeks[idx].length == 0)
+                        self.weeks.splice(idx, 1);
+
+
+                    function getDay(date) { // получить номер дня недели, от 0(пн) до 6(вс)
+                        var day = date.getDay();
+                        if (day == 0) day = 7;
+                        return day - 1;
+                    }
+                };
             },
 
             link: function (scope, element, attrs, ctrl) {
