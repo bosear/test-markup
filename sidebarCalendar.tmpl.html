@@ -1,8 +1,11 @@
 <div class="calendar">
-    <a class="prev" href="#" ng-click="ctrl.onChangeEvents()"></a>
-    <a class="" href="#" ng-click="ctrl.onChangeEvents()">Изменить события</a>
-    <a class="next" href="#" ng-click="ctrl.onChangeEvents()"></a>
-    <simple-calendar class="calendar-datepicker">
-
+    <a class="prev" ng-class="{'_disable': ctrl.isPrevButtonDisable()}" href="#" ng-click="ctrl.prevDay()"></a>
+    <a class="current-day" ng-class="{'_show': ctrl.isShowCalendar}" href="#" ng-click="ctrl.turnCalendar(); $event.stopPropagation();">{{ctrl.getTextDate(ctrl.selectedDate)}}</a>
+    <a class="next" href="#" ng-click="ctrl.nextDay()"></a>
+    <simple-calendar
+            class="calendar-datepicker"
+            ng-show="ctrl.isShowCalendar"
+            show="ctrl.isShowCalendar"
+            selected-date="ctrl.selectedDate">
     </simple-calendar>
 </div>

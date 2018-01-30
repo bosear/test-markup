@@ -1,19 +1,20 @@
 <div class="calendar-header">
     <a href="#" class="prev-month" ng-click="ctrl.prevMonth()"
-    ng-class="{'_disable': isMonthDisable()}"></a>
+    ng-class="{'_disable': ctrl.isPrevButtonDisable}"></a>
     <div class="date-container">
         <span class="current-year">{{ctrl.getTextYear()}}</span>
         <span class="current-month">{{ctrl.getTextMonth()}}</span>
     </div>
-    <a href="#" class="next-month" ng-click="ctrl.nextMonth()"></a>
+    <a href="#" class="next-month" ng-click="ctrl.nextMonth(); $event.stopPropagation();"></a>
 </div>
 <div class="calendar-body">
     <div class="month">
         <div class="week" ng-repeat="week in ctrl.weeks">
-            <div class="day" ng-repeat="day in week"
-                 ng-class="{'_disable': !day.isCurrent || ctrl.isPrevDay(day.day),
-                            '_today': day.isCurrent && ctrl.isToday(day.day)}">
-                {{day.day}}
+            <div class="day" ng-repeat="day in week" ng-click="ctrl.setDate(day)"
+                 ng-class="{'_disable': ctrl.isDisable(day),
+                            '_today':ctrl.isToday(day),
+                            '_selected-day': ctrl.isSelectedDay(day)}">
+                {{day.day.getDate()}}
             </div>
         </div>
     </div>

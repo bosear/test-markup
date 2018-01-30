@@ -273,7 +273,7 @@ html, body {
 .calendar-header {
     display: flex;
     justify-content: space-between;
-    padding: 5px 10px;
+    padding: 16px;
     align-items: center;
     height: 55px;
     border-bottom: 1px solid #E9ECEF;
@@ -284,9 +284,10 @@ html, body {
     width: 30px;
     background-color: #D5DFE9;
     border-radius: 50%;
-    background-position: center;
+    background-position: 45% 50%;
     background-image: url(arrow2.svg);
     background-repeat: no-repeat;
+    background-size: 8px;
 }
 
 .next-month {
@@ -294,9 +295,10 @@ html, body {
     width: 30px;
     border-radius: 50%;
     background-color: #D5DFE9;
-    background-position: center;
+    background-position: 55% 50%;;
     background-image: url(arrow.svg);
     background-repeat: no-repeat;
+    background-size: 8px;
 }
 
 .date-container {
@@ -314,7 +316,7 @@ html, body {
 }
 
 .calendar-body {
-    padding: 10px;
+    padding: 16px;
 }
 .day {
     flex: 1;
@@ -324,8 +326,8 @@ html, body {
     color: #858E98;
 }
 
-.day:not(._disable):not(._today):hover {
-    background-color: #007DFF;
+.day:not(._disable):hover {
+    background: #98A9B9;
     color: #fff;
     border-radius: 2px;
 }
@@ -340,9 +342,33 @@ html, body {
 }
 
 ._today {
-    background: #98A9B9;
-    color: #fff;
+    color: #000;
+    font-weight: bold;
+    border: 1px solid #98A9B9;
     border-radius: 2px;
+}
+
+.day._selected-day, .day._selected-day:hover {
+    background: #007DFF;
+    color: #fff;
+    border: 0;
+    border-radius: 2px;
+}
+
+.prev-month._disable, .prev._disable {
+    cursor: default;
+    background-color: #F6F7F9;
+}
+
+.current-day {
+    text-decoration: none;
+    font-size: 15px;
+    color: #000000;
+    font-weight: bold;
+}
+
+.current-day._show {
+    color: #0070E0;
 }
 
 

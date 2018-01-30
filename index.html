@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <script src="jquery-3.3.1.min.js"></script>
     <script data-require="angularjs@1.5.3" data-semver="1.5.3" src="https://code.angularjs.org/1.5.3/angular.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html;" charset="utf-8">
     <link rel="stylesheet" href="homePage.css">
@@ -335,17 +336,28 @@
         "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь",
         "Октябрь","Ноябрь", "Декабрь"];
 
+        factory.monthsOf = ["января", "февраля", "марта",
+            "апреля", "мая", "июня", "июля", "августа", "сентября",
+            "октября","ноября", "декабря"];
+
+        factory.shortMonths = ["янв", "фев", "март",
+            "апр", "май", "июнь", "июль", "авг", "сен",
+            "окт","ноя", "дек"];
+
+        factory.today = "Сегодня";
+        factory.tomorrow = "Завтра";
+
         return factory;
     }
 
-    function simpleCalendarDirective(constantsFactory) {
+    function simpleCalendarDirective(constantsFactory, $document) {
         return {
             scope: {},
 
             bindToController: {
                 format: '@',
-                currentDate: '=',
-                selectedDate: '='
+                selectedDate: '=',
+                show: '='
             },
 
             templateUrl: 'simpleCalendar.tmpl.html',
@@ -353,13 +365,7 @@
             controller: function($scope, $element, $attrs) {
                 var self = this;
 
-                self.isToday = function(day) {
-                    return +(new Date(self.selectedYear, self.selectedMonth, day)) == +(new Date(self.currentYear, self.currentMonth, self.getToday()));
-                };
-
-                self.getToday = function () {
-                    return (new Date()).getDate();
-                };
+                self.isPrevButtonDisable = true;
 
                 self.getTextYear = function () {
                     return self.selectedYear;
@@ -386,7 +392,7 @@
                         iterableDate.setDate(1 + i - firstDayWeek);
                         week.push({
                             isCurrent: false,
-                            day: iterableDate.getDate()
+                            day: iterableDate
                         });
                     }
 
@@ -396,7 +402,7 @@
                     while (date.getMonth() == mon) {
                         weeks[idx].push({
                             isCurrent: true,
-                            day: date.getDate()
+                            day: date
                         });
 
                         if (getDay(date) % 7 == 6) { // вс, последний день - перевод строки
@@ -404,7 +410,7 @@
                             ++idx;
                         }
 
-                        date.setDate(date.getDate() + 1);
+                        date = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
                     }
 
                     // добить таблицу пустыми ячейками, если нужно
@@ -412,9 +418,9 @@
                         for (var i = getDay(date); i < 7; i++) {
                             weeks[idx].push({
                                  isCurrent: false,
-                                 day: date.getDate()
+                                 day: date
                             });
-                            date.setDate(date.getDate() + 1);
+                            date = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
                         }
                     }
 
@@ -434,6 +440,8 @@
                 self.nextMonth = function () {
                     ++self.selectedMonth;
 
+                    self.isPrevButtonDisable = false;
+
                     if (self.selectedMonth === 12) {
                         self.selectedMonth = 0;
                         ++self.selectedYear;
@@ -445,7 +453,13 @@
                 self.prevMonth = function () {
                     --self.selectedMonth;
 
-                    if (self.selectedMonth === -1) {
+                    if (self.selectedMonth === -1 || self.selectedMonth === 0) {
+                        if (self.currentYear === self.selectedYear) {
+                            self.selectedMonth = 0;
+                            self.isPrevButtonDisable = true;
+                            return;
+                        }
+
                         self.selectedMonth = 11;
                         --self.selectedYear;
                     }
@@ -454,21 +468,74 @@
                     self.weeks = self.getWeeks(self.selectedYear, self.selectedMonth);
                 };
 
-                self.isPrevDay = function (day) {
-                    return +(new Date(self.selectedYear, self.selectedMonth, day)) < Date.now();
+                self.setDate = function (day) {
+                    if (!self.isDisable(day)) {
+                        self.selectedDate = day.day;
+                        self.show = false;
+                    }
                 };
 
-                self.selectedMonth = (new Date).getMonth();
-                self.selectedYear = (new Date).getFullYear();
+                self.isDisable = function (day) {
+                    return !day.isCurrent || self.isPrevDay(day.day)
+                };
 
-                self.currentMonth = self.selectedMonth;
-                self.currentYear = self.selectedYear;
+                self.isPrevDay = function (date) {
+                    return +date < +self.currentDate;
+                };
+
+                self.isToday = function(day) {
+                    return day.isCurrent && (+day.day == +(new Date(self.currentYear, self.currentMonth, self.currentDay)));       // TODO: изменить naming day.day
+                };
+
+                self.isSelectedDay = function (day) {
+                    return  day.isCurrent && (+self.selectedDate === +day.day);
+                };
+
+                self.selectedMonth = self.selectedDate.getMonth();
+                self.selectedYear = self.selectedDate.getFullYear();
+
+                self.currentDate = new Date();
+
+                self.currentYear = self.currentDate.getFullYear();
+                self.currentMonth = self.currentDate.getMonth();     //TODO: добавить обработчик события
+                self.currentDay = self.currentDate.getDate();
+
+                self.currentDate = new Date(self.currentYear, self.currentMonth, self.currentDay);
 
                 self.weeks = self.getWeeks(self.selectedYear, self.selectedMonth);
+
+                $scope.$watch(function () {
+                    return self.selectedDate;
+                }, function () {
+                    self.selectedMonth = self.selectedDate.getMonth();
+                    self.selectedYear = self.selectedDate.getFullYear();
+                    self.weeks = self.getWeeks(self.selectedYear, self.selectedMonth);
+                });
+
+                $scope.$watch(function () {
+                    return self.show;
+                }, function () {
+                    self.selectedMonth = self.selectedDate.getMonth();
+                    self.selectedYear = self.selectedDate.getFullYear();
+                    self.weeks = self.getWeeks(self.selectedYear, self.selectedMonth);
+                });
             },
 
             link: function (scope, element, attrs, ctrl) {
 
+                $document.on('click', onDocumentClick);
+
+                scope.$on('$destroy', function () {
+                    $document.off('click', onDocumentClick);
+                });
+
+                function onDocumentClick(event) {
+                    var $target = $(event.target);
+                    if (!element.is($target) && !element.has($target).length && ctrl.show) {
+                        ctrl.show = false;
+                        scope.$apply();
+                    }
+                }
             },
 
             controllerAs: 'ctrl'
@@ -480,7 +547,7 @@
             scope: {},
 
             bindToController: {
-                onChangeEvents: '&'
+                onChangeEvents: '&' // TODO: добавить сюда дату (selectedDate)
             },
 
             templateUrl: 'sidebarCalendar.tmpl.html',
@@ -488,61 +555,53 @@
             controller: function($scope, $element, $attrs) {
                 var self = this;
 
-                console.log(self.onChangeEvents());
+                self.isShowCalendar = false;
+                self.selectedDate = new Date(); // TODO: добавить event на обновление даты
+                //self.isPrevButtonDisable = true;
 
-                self.selectedMonth = (new Date).getMonth();
+                self.currentYear = self.selectedDate.getFullYear();
+                self.currentMonth = self.selectedDate.getMonth(); // // TODO: добавить event на обновление даты и заменить selectedDate на currentDay после добавление объекта событий по времени
+                self.currentDay = self.selectedDate.getDate();
 
-                self.getWeeks = function (year, month) {
-                    var mon = month; // месяцы в JS идут от 0 до 11, а не от 1 до 12
-                    var date = new Date(year, mon);
-                    var week = [];
-                    var weeks = [];
-                    var firstDayWeek = getDay(date);
-                    var idx = 0, iterableDate;
+                self.currentDate = new Date(self.currentYear, self.currentMonth, self.currentDay);
 
-                    // заполнить первый ряд от понедельника
-                    // и до дня, с которого начинается месяц
-                    // * * * | 1  2  3  4
-                    for (var i = 0; i < firstDayWeek; i++) {
-                        iterableDate = new Date(year, mon);
-                        iterableDate.setDate(1 + i - firstDayWeek);
-                        week.push(iterableDate.getDate());
-                    }
+                self.selectedDate = new Date(self.currentYear, self.currentMonth, self.currentDay);
 
-                    weeks.push(week);
-
-                    // ячейки календаря с датами
-                    while (date.getMonth() == mon) {
-                        weeks[idx].push(date.getDate());
-
-                        if (getDay(date) % 7 == 6) { // вс, последний день - перевод строки
-                            weeks.push([]);
-                            ++idx;
-                        }
-
-                        date.setDate(date.getDate() + 1);
-                    }
-
-                    // добить таблицу пустыми ячейками, если нужно
-                    if (getDay(date) != 0) {
-                        for (var i = getDay(date); i < 7; i++) {
-                            weeks[idx].push(date.getDate());
-                            date.setDate(date.getDate() + 1);
-                        }
-                    }
-
-                    if (weeks[idx].length == 0)
-                        weeks.splice(idx, 1);
-
-
-                    function getDay(date) { // получить номер дня недели, от 0(пн) до 6(вс)
-                        var day = date.getDay();
-                        if (day == 0) day = 7;
-                        return day - 1;
-                    }
-
-                    return weeks;
+                self.isPrevButtonDisable = function () {
+                     return +self.selectedDate <= +self.currentDate;
                 };
+
+                self.turnCalendar = function () {
+                    self.isShowCalendar = !self.isShowCalendar;
+                };
+
+                self.getTextDate = function () {
+                    var idxMonth = self.selectedDate.getMonth();
+                    var today = new Date(self.currentYear, self.currentMonth, self.currentDay);
+                    var tomorrow = new Date(self.currentYear, self.currentMonth, self.currentDay + 1);
+
+                    if (+self.selectedDate === +today)
+                        return self.selectedDate.getDate() + ' ' + constantsFactory.shortMonths[idxMonth] + ' • ' + constantsFactory.today;
+                    else if (+self.selectedDate === +tomorrow)
+                        return self.selectedDate.getDate() + ' ' + constantsFactory.shortMonths[idxMonth] + ' • ' + constantsFactory.tomorrow;
+                    else
+                        return self.selectedDate.getDate() + ' ' + constantsFactory.monthsOf[idxMonth];
+                };
+
+                self.nextDay = function () {
+                    self.selectedDate =  new Date(self.selectedDate.getFullYear(), self.selectedDate.getMonth(), self.selectedDate.getDate() + 1);
+                   // self.isPrevButtonDisable = false;
+                };
+
+                self.prevDay = function () {
+                    var newDay = new Date(self.selectedDate.getFullYear(), self.selectedDate.getMonth(), self.selectedDate.getDate() - 1);
+                    if (+newDay < +self.currentDate) {
+                       // self.isPrevButtonDisable = true;
+                        return;
+                    }
+                    self.selectedDate = newDay;
+                };
+
             },
 
             link: function (scope, element, attrs, ctrl) {
