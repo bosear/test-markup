@@ -88,6 +88,7 @@ html, body {
 }
 
 .calendar {
+    position: relative;
     min-width: 245px; /*TODO: нужно ли здесь задавать min-width или обычный width?*/
     height: 46px;
     display: flex;
@@ -97,7 +98,6 @@ html, body {
 }
 
 .sidebar {
-    min-width: 245px;
     border-right: 1px solid #E9ECEF;
 }
 
@@ -148,8 +148,9 @@ html, body {
     margin-left: calc(100%/15.677*0.2);
 }
 
-.sidebar .tr, .sidebar .between-floors {
-    padding-left: 25px;
+.sidebar .floor {
+    width: 245px;
+    padding: 0 25px;
 }
 
 .sidebar .floor .tr {
@@ -256,6 +257,94 @@ html, body {
     background-position: 60% 50%;
     background-image: url(arrow.svg);
 }
+
+.calendar-datepicker {
+    position: absolute;
+    top: 100%;
+    left: 25px;
+    min-width: 245px;
+    width: 100%;
+    z-index: 1000;
+    background: #FFFFFF;
+    box-shadow: 0 1px 8px 0 rgba(0,44,92,0.28);
+    border-radius: 4px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+    align-items: center;
+    height: 55px;
+    border-bottom: 1px solid #E9ECEF;
+}
+
+.prev-month {
+    height: 30px;
+    width: 30px;
+    background-color: #D5DFE9;
+    border-radius: 50%;
+    background-position: center;
+    background-image: url(arrow2.svg);
+    background-repeat: no-repeat;
+}
+
+.next-month {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    background-color: #D5DFE9;
+    background-position: center;
+    background-image: url(arrow.svg);
+    background-repeat: no-repeat;
+}
+
+.date-container {
+    display: flex;
+    flex-flow: column;
+    text-align: center;
+}
+
+.month {
+
+}
+
+.week {
+    display: flex;
+}
+
+.calendar-body {
+    padding: 10px;
+}
+.day {
+    flex: 1;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    color: #858E98;
+}
+
+.day:not(._disable):not(._today):hover {
+    background-color: #007DFF;
+    color: #fff;
+    border-radius: 2px;
+}
+
+._disable {
+    color: #E9ECEF;
+}
+
+.current-year, .current-month {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+._today {
+    background: #98A9B9;
+    color: #fff;
+    border-radius: 2px;
+}
+
 
 
 

@@ -19,11 +19,9 @@
     </div>
 </header>
 <section class="main-section">
-    <div class="calendar">
-        <a class="prev" href="#" ng-click="ctrl.changeEvents()"></a>
-        <a class="" href="#" ng-click="ctrl.changeEvents()">Изменить события</a>
-        <a class="next" href="#" ng-click="ctrl.changeEvents()"></a>
-    </div>
+        <sidebar-calendar
+           on-change-events="ctrl.changeEvents()">
+        </sidebar-calendar>
     <div class="timeline">
         <div class="td"><div class="time">8:00</div></div>
         <div class="td"><div class="time">9</div></div>
@@ -115,7 +113,8 @@
 
     angular.module('app').controller('MainController', MainController)
                         .directive('roomEvents', roomEventsDirective)
-                        .directive('calendar', calendarDirective)
+                        .directive('simpleCalendar', simpleCalendarDirective)
+                        .directive('sidebarCalendar', sidebarCalendarDirective)
                         .factory('constantsFactory', constantsFactory);
 
     function MainController($scope) {
@@ -166,7 +165,7 @@
         var events1 = [{
             id: 1,
             start: "10:00",
-            end: "11:35"
+            end: "11:30"
         },
             {
                 id: 2,
@@ -332,10 +331,14 @@
         factory.endTime = "23:12";
         factory.allTime = 940;
 
+        factory.months = ["Январь", "Февраль", "Март",
+        "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь",
+        "Октябрь","Ноябрь", "Декабрь"];
+
         return factory;
     }
 
-    function calendarDirective(constantsFactory) {
+    function simpleCalendarDirective(constantsFactory) {
         return {
             scope: {},
 
@@ -345,18 +348,151 @@
                 selectedDate: '='
             },
 
-            templateUrl: 'calendar.tmpl.html',
+            templateUrl: 'simpleCalendar.tmpl.html',
 
             controller: function($scope, $element, $attrs) {
-                var self = {};
+                var self = this;
 
-                self.weeks = [];
-                self.selectedMonth = (new Date).getMonth();
+                self.isToday = function(day) {
+                    return +(new Date(self.selectedYear, self.selectedMonth, day)) === Date.now();
+                };
 
-                self.setWeeks = function (year, month) {
+                self.getToday = function () {
+                    return (new Date()).getDate();
+                };
+
+                self.getTextYear = function () {
+                    return self.selectedYear;
+                };
+
+                self.getTextMonth = function () {
+                    var idx = self.selectedMonth;
+                    return constantsFactory.months[idx];
+                };
+
+                self.getWeeks = function (year, month) {
                     var mon = month; // месяцы в JS идут от 0 до 11, а не от 1 до 12
                     var date = new Date(year, mon);
                     var week = [];
+                    var weeks = [];
+                    var firstDayWeek = getDay(date);
+                    var idx = 0, iterableDate;
+
+                    // заполнить первый ряд от понедельника
+                    // и до дня, с которого начинается месяц
+                    // * * * | 1  2  3  4
+                    for (var i = 0; i < firstDayWeek; i++) {
+                        iterableDate = new Date(year, mon);
+                        iterableDate.setDate(1 + i - firstDayWeek);
+                        week.push({
+                            isCurrent: false,
+                            day: iterableDate.getDate()
+                        });
+                    }
+
+                    weeks.push(week);
+
+                    // ячейки календаря с датами
+                    while (date.getMonth() == mon) {
+                        weeks[idx].push({
+                            isCurrent: true,
+                            day: date.getDate()
+                        });
+
+                        if (getDay(date) % 7 == 6) { // вс, последний день - перевод строки
+                            weeks.push([]);
+                            ++idx;
+                        }
+
+                        date.setDate(date.getDate() + 1);
+                    }
+
+                    // добить таблицу пустыми ячейками, если нужно
+                    if (getDay(date) != 0) {
+                        for (var i = getDay(date); i < 7; i++) {
+                            weeks[idx].push({
+                                 isCurrent: false,
+                                 day: date.getDate()
+                            });
+                            date.setDate(date.getDate() + 1);
+                        }
+                    }
+
+                    if (weeks[idx].length == 0)
+                        weeks.splice(idx, 1);
+
+
+                    function getDay(date) { // получить номер дня недели, от 0(пн) до 6(вс)
+                        var day = date.getDay();
+                        if (day == 0) day = 7;
+                        return day - 1;
+                    }
+
+                    return weeks;
+                };
+
+                self.nextMonth = function () {
+                    ++self.selectedMonth;
+
+                    if (self.selectedMonth === 12) {
+                        self.selectedMonth = 0;
+                        ++self.selectedYear;
+                    }
+
+                    self.weeks = self.getWeeks(self.selectedYear, self.selectedMonth);
+                };
+
+                self.prevMonth = function () {
+                    --self.selectedMonth;
+
+                    if (self.selectedMonth === -1) {
+                        self.selectedMonth = 11;
+                        --self.selectedYear;
+                    }
+
+
+                    self.weeks = self.getWeeks(self.selectedYear, self.selectedMonth);
+                };
+
+                self.isPrevDay = function (day) {
+                    return +(new Date(self.selectedYear, self.selectedMonth, day)) < Date.now();
+                };
+
+                self.selectedMonth = (new Date).getMonth();
+                self.selectedYear = (new Date).getFullYear();
+                self.weeks = self.getWeeks(self.selectedYear, self.selectedMonth);
+            },
+
+            link: function (scope, element, attrs, ctrl) {
+
+            },
+
+            controllerAs: 'ctrl'
+        }
+    }
+
+    function sidebarCalendarDirective(constantsFactory) {
+        return {
+            scope: {},
+
+            bindToController: {
+                onChangeEvents: '&'
+            },
+
+            templateUrl: 'sidebarCalendar.tmpl.html',
+
+            controller: function($scope, $element, $attrs) {
+                var self = this;
+
+                console.log(self.onChangeEvents());
+
+                self.selectedMonth = (new Date).getMonth();
+
+                self.getWeeks = function (year, month) {
+                    var mon = month; // месяцы в JS идут от 0 до 11, а не от 1 до 12
+                    var date = new Date(year, mon);
+                    var week = [];
+                    var weeks = [];
                     var firstDayWeek = getDay(date);
                     var idx = 0, iterableDate;
 
@@ -369,14 +505,14 @@
                         week.push(iterableDate.getDate());
                     }
 
-                    self.weeks.push(week);
+                    weeks.push(week);
 
                     // ячейки календаря с датами
                     while (date.getMonth() == mon) {
-                        self.weeks[idx].push(date.getDate());
+                        weeks[idx].push(date.getDate());
 
                         if (getDay(date) % 7 == 6) { // вс, последний день - перевод строки
-                            self.weeks.push([]);
+                            weeks.push([]);
                             ++idx;
                         }
 
@@ -386,13 +522,13 @@
                     // добить таблицу пустыми ячейками, если нужно
                     if (getDay(date) != 0) {
                         for (var i = getDay(date); i < 7; i++) {
-                            self.weeks[idx].push(date.getDate());
+                            weeks[idx].push(date.getDate());
                             date.setDate(date.getDate() + 1);
                         }
                     }
 
-                    if (self.weeks[idx].length == 0)
-                        self.weeks.splice(idx, 1);
+                    if (weeks[idx].length == 0)
+                        weeks.splice(idx, 1);
 
 
                     function getDay(date) { // получить номер дня недели, от 0(пн) до 6(вс)
@@ -400,6 +536,8 @@
                         if (day == 0) day = 7;
                         return day - 1;
                     }
+
+                    return weeks;
                 };
             },
 
