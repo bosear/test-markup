@@ -1,5 +1,6 @@
 <div class="calendar-header">
-    <a href="#" class="prev-month" ng-click="ctrl.prevMonth()"></a>
+    <a href="#" class="prev-month" ng-click="ctrl.prevMonth()"
+    ng-class="{'_disable': isMonthDisable()}"></a>
     <div class="date-container">
         <span class="current-year">{{ctrl.getTextYear()}}</span>
         <span class="current-month">{{ctrl.getTextMonth()}}</span>

@@ -354,7 +354,7 @@
                 var self = this;
 
                 self.isToday = function(day) {
-                    return +(new Date(self.selectedYear, self.selectedMonth, day)) === Date.now();
+                    return +(new Date(self.selectedYear, self.selectedMonth, day)) == +(new Date(self.currentYear, self.currentMonth, self.getToday()));
                 };
 
                 self.getToday = function () {
@@ -460,6 +460,10 @@
 
                 self.selectedMonth = (new Date).getMonth();
                 self.selectedYear = (new Date).getFullYear();
+
+                self.currentMonth = self.selectedMonth;
+                self.currentYear = self.selectedYear;
+
                 self.weeks = self.getWeeks(self.selectedYear, self.selectedMonth);
             },
 
